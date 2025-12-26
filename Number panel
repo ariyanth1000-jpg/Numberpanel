@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Live Number Panel</title>
+
+<style>
+:root{
+  --bg:#070A13;
+  --bg2:#0B1530;
+  --border:rgba(255,255,255,.14);
+  --text:#EEF3FF;
+  --muted:#A7B3D1;
+
+  --blue1:#4F8CFF;
+  --blue2:#2563EB;
+
+  --teal1:#34D399;
+  --teal2:#10B981;
+
+  --shadow: 0 25px 60px rgba(0,0,0,.55);
+  --glass: rgba(255,255,255,.10);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(900px 600px at 20% 10%, rgba(79,140,255,.22), transparent 60%),
+    radial-gradient(900px 600px at 90% 20%, rgba(52,211,153,.18), transparent 60%),
+    linear-gradient(135deg, var(--bg), var(--bg2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px;
+}
+
+/* Small centered premium box */
+.card{
+  width:min(520px, calc(100vw - 24px));
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+.top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.title{font-weight:900; font-size:17px; line-height:1.1;}
+.sub{margin-top:5px; color:var(--muted); font-size:12px;}
+.badge{
+  border:1px solid var(--border);
+  background: rgba(0,0,0,.25);
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:12px;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.panel{
+  border:1px solid var(--border);
+  background: rgba(0,0,0,.22);
+  border-radius:18px;
+  padding:14px;
+}
+
+/* 2 tick options */
+.ticks{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+.tick{
+  flex:1 1 160px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.06);
+  border-radius:14px;
+  padding:10px 12px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  cursor:pointer;
+  user-select:none;
+  font-weight:900;
+}
+.tick input{
+  width:18px; height:18px;
+  accent-color: var(--blue2);
+}
+.tick span{font-size:13px; letter-spacing:.2px;}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1fr 160px;
+  gap:12px;
+}
+@media (max-width: 420px){ .grid{ grid-template-columns: 1fr; } }
+.box{
+  border:1px solid var(--border);
+  background: var(--glass);
+  border-radius:16px;
+  padding:12px;
+}
+.label{color:var(--muted); font-size:12px; margin-bottom:6px; font-weight:800;}
+.value{font-size:28px; font-weight:950; word-break:break-word;}
+.rem{font-size:32px; font-weight:950; text-align:center;}
+
+.actions{
+  margin-top:12px;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:12px;
+}
+button{
+  border:none;
+  border-radius:16px;
+  padding:13px 14px;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+  transition: transform .08s ease, opacity .15s ease;
+}
+button:active{ transform: scale(.98); }
+button:disabled{ opacity:.65; cursor:not-allowed; }
+
+.btnNew{
+  color:white;
+  background: linear-gradient(135deg, var(--blue1), var(--blue2));
+  box-shadow: 0 14px 34px rgba(37,99,235,.35);
+}
+.btnCopy{
+  color:#052016;
+  background: linear-gradient(135deg, var(--teal1), var(--teal2));
+  box-shadow: 0 14px 34px rgba(16,185,129,.22);
+}
+
+/* Floating toast */
+.toast{
+  position:fixed;
+  top:12px;
+  left:50%;
+  transform: translateX(-50%) translateY(-6px);
+  min-width: 220px;
+  max-width: calc(100vw - 24px);
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background: rgba(0,0,0,.55);
+  color: var(--text);
+  box-shadow: 0 16px 40px rgba(0,0,0,.5);
+  backdrop-filter: blur(10px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  font-weight:900;
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .18s ease, transform .18s ease;
+  z-index:9999;
+}
+.toast.show{opacity:1; transform: translateX(-50%) translateY(0);}
+.toast .dot{width:9px;height:9px;border-radius:50%;background:#60a5fa;box-shadow:0 0 14px rgba(96,165,250,.6);}
+.toast.ok .dot{background:#34d399;box-shadow:0 0 14px rgba(52,211,153,.55);}
+.toast.warn .dot{background:#facc15;box-shadow:0 0 14px rgba(250,204,21,.55);}
+</style>
+</head>
+
+<body>
+<div class="toast" id="toast"><span class="dot"></span><span id="toastText"></span></div>
+
+<div class="card">
+  <div class="top">
+    <div>
+      <div class="title">Live Number Panel</div>
+      <div class="sub">Created by Tamim</div>
+    </div>
+    <div class="badge">LIVE</div>
+  </div>
+
+  <div class="panel">
+
+    <div class="ticks">
+      <label class="tick">
+        <input type="radio" name="service" value="facebook" checked>
+        <span>Facebook</span>
+      </label>
+
+      <label class="tick">
+        <input type="radio" name="service" value="instagram">
+        <span>Instagram</span>
+      </label>
+    </div>
+
+    <div class="grid">
+      <div class="box">
+        <div class="label">Number</div>
+        <div class="value" id="phone">Loading...</div>
+      </div>
+
+      <div class="box">
+        <div class="label">Remaining</div>
+        <div class="rem" id="remaining">0</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btnNew" id="btnNew">New number</button>
+      <button class="btnCopy" id="btnCopy">Copy</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const URL = "https://script.google.com/macros/s/AKfycbyNFudsbr0Tr0luiZ0gYAb6-lLNF5_MXFPcew-7z1QA__I5LpV_7b4dBmUIi5LR_SWeRg/exec";
+
+const phoneEl = document.getElementById("phone");
+const remEl   = document.getElementById("remaining");
+const btnNew  = document.getElementById("btnNew");
+const btnCopy = document.getElementById("btnCopy");
+
+const toast = document.getElementById("toast");
+const toastText = document.getElementById("toastText");
+let toastTimer = null;
+
+function showToast(msg, type="ok", ms=1300){
+  toast.className = "toast show " + (type || "");
+  toastText.textContent = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> toast.className = "toast", ms);
+}
+
+function getService(){
+  return document.querySelector('input[name="service"]:checked')?.value || "facebook";
+}
+function qs(params){
+  const s = new URLSearchParams(params);
+  return s.toString();
+}
+
+/* ✅ If value is only digits => show + ; if text => no + */
+function showPlusOnlyForDigits(s){
+  s = String(s ?? "").trim();
+  if(!s || s === "Loading..." || s === "No more data") return s;
+  return /^[0-9]+$/.test(s) ? ("+" + s) : s;
+}
+
+function forceCopy(text){
+  text = (text || "").trim();
+  if (!text || text === "Loading..." || text === "No more data") return false;
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.left = "-9999px";
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch(e) { ok = false; }
+  document.body.removeChild(ta);
+  return ok;
+}
+
+async function loadState(){
+  const service = getService();
+  try{
+    const r = await fetch(URL + "?" + qs({action:"state", service}), { cache:"no-store" });
+    const d = await r.json();
+    if(d.status === "ok"){
+      phoneEl.textContent = showPlusOnlyForDigits(d.current);
+      remEl.textContent = d.remaining;
+    }else{
+      showToast("State error", "warn", 1500);
+    }
+  }catch(e){
+    showToast("Network error", "warn", 1500);
+  }
+}
+
+async function popOnce(){
+  const service = getService();
+  const r = await fetch(URL + "?" + qs({action:"pop", service}), { cache:"no-store" });
+  return await r.json();
+}
+
+async function newNumber(){
+  btnNew.disabled = true;
+  const old = btnNew.textContent;
+  btnNew.textContent = "Working…";
+  showToast("Working…", "warn", 900);
+
+  while(true){
+    let d;
+    try{
+      d = await popOnce();
+    }catch(e){
+      showToast("Network error", "warn", 1500);
+      break;
+    }
+
+    if(d.status === "ok"){
+      phoneEl.textContent = showPlusOnlyForDigits(d.value);
+      remEl.textContent = d.remaining;
+      showToast("New number successfully", "ok", 1200);
+      break;
+    }
+
+    if(d.status === "empty"){
+      phoneEl.textContent = showPlusOnlyForDigits(d.value || "No more data");
+      remEl.textContent = d.remaining ?? "0";
+      showToast("No more data", "warn", 1400);
+      break;
+    }
+
+    if(d.status === "busy"){
+      const ms = Number(d.retry_after_ms || 800);
+      let sec = Math.max(1, Math.ceil(ms/1000));
+      while(sec > 0){
+        showToast("Busy… wait " + sec + "s", "warn", 950);
+        await new Promise(r => setTimeout(r, 1000));
+        sec--;
+      }
+      continue;
+    }
+
+    showToast("Error", "warn", 1400);
+    break;
+  }
+
+  btnNew.textContent = old;
+  btnNew.disabled = false;
+}
+
+btnNew.addEventListener("click", newNumber);
+
+btnCopy.addEventListener("click", () => {
+  const ok = forceCopy(phoneEl.textContent);
+  showToast(ok ? "Copied" : "Copy failed", ok ? "ok" : "warn", 1100);
+});
+
+document.querySelectorAll('input[name="service"]').forEach(el=>{
+  el.addEventListener("change", loadState);
+});
+
+loadState();
+</script>
+</body>
+</html>
