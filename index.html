@@ -12,173 +12,263 @@
   --border:rgba(255,255,255,.14);
   --text:#EEF3FF;
   --muted:#A7B3D1;
-
   --blue1:#4F8CFF;
   --blue2:#2563EB;
-
   --teal1:#34D399;
   --teal2:#10B981;
-
-  --shadow: 0 25px 60px rgba(0,0,0,.55);
-  --glass: rgba(255,255,255,.10);
 }
-*{box-sizing:border-box}
-html,body{height:100%}
+
+/* ===== RESET ===== */
+*{box-sizing:border-box;margin:0;padding:0;}
 body{
-  margin:0;
   min-height:100vh;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color:var(--text);
-  background:
-    radial-gradient(900px 600px at 20% 10%, rgba(79,140,255,.22), transparent 60%),
-    radial-gradient(900px 600px at 90% 20%, rgba(52,211,153,.18), transparent 60%),
-    linear-gradient(135deg, var(--bg), var(--bg2));
   display:flex;
-  align-items:center;
   justify-content:center;
-  padding:12px;
+  align-items:center;
+  font-family:system-ui,sans-serif;
+  background:linear-gradient(135deg,var(--bg),var(--bg2));
+  color:var(--text);
+  overflow-x:hidden;
 }
 
-/* Small centered premium box */
+/* ===== CARD ===== */
 .card{
-  width:min(520px, calc(100vw - 24px));
-  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
-  border:1px solid var(--border);
+  width:520px;
+  max-width:95vw;
+  background:rgba(255,255,255,.08);
   border-radius:20px;
   padding:16px;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(12px);
-}
-.top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:12px;
-}
-.title{font-weight:900; font-size:17px; line-height:1.1;}
-.sub{margin-top:5px; color:var(--muted); font-size:12px;}
-.badge{
-  border:1px solid var(--border);
-  background: rgba(0,0,0,.25);
-  border-radius:999px;
-  padding:6px 10px;
-  font-size:12px;
-  color:var(--muted);
-  white-space:nowrap;
-}
-.panel{
-  border:1px solid var(--border);
-  background: rgba(0,0,0,.22);
-  border-radius:18px;
-  padding:14px;
+  position:relative;
+  overflow:hidden;
+  font-size:clamp(12px,1.1vw,16px);
+  border:2px solid transparent;
+
+  /* FLOWING RAINBOW GLOW */
+  box-shadow:0 0 20px red;
+  animation: rainbowFlow 8s linear infinite;
 }
 
-/* 2 tick options */
+@keyframes rainbowFlow{
+  0%{box-shadow:0 0 20px red,0 0 40px red,0 0 60px red,0 0 80px red;}
+  12.5%{box-shadow:0 0 20px orange,0 0 40px orange,0 0 60px orange,0 0 80px orange;}
+  25%{box-shadow:0 0 20px yellow,0 0 40px yellow,0 0 60px yellow,0 0 80px yellow;}
+  37.5%{box-shadow:0 0 20px green,0 0 40px green,0 0 60px green,0 0 80px green;}
+  50%{box-shadow:0 0 20px blue,0 0 40px blue,0 0 60px blue,0 0 80px blue;}
+  62.5%{box-shadow:0 0 20px navy,0 0 40px navy,0 0 60px navy,0 0 80px navy;}
+  75%{box-shadow:0 0 20px aqua,0 0 40px aqua,0 0 60px aqua,0 0 80px aqua;}
+  87.5%{box-shadow:0 0 20px pink,0 0 40px pink,0 0 60px pink,0 0 80px pink;}
+  100%{box-shadow:0 0 20px red,0 0 40px red,0 0 60px red,0 0 80px red;}
+}
+
+/* ===== TOP ===== */
+.top{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:12px;
+  flex-wrap:nowrap;
+}
+.title,.sub,.badge{
+  white-space:nowrap;
+  font-size:clamp(12px,1.2vw,16px);
+}
+.title{font-weight:900}
+.sub{color:var(--muted)}
+.badge{
+  border:1px solid var(--border);
+  padding:6px 10px;
+  border-radius:999px;
+}
+
+/* ===== PANEL ===== */
+.panel{
+  background:rgba(0,0,0,.25);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:14px;
+  position:relative;
+  overflow:hidden;
+}
+.panel::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,
+    transparent 0%,
+    rgba(79,140,255,.15),
+    rgba(52,211,153,.15),
+    rgba(168,85,247,.15),
+    transparent 100%);
+  animation:innerSweep 4s linear infinite;
+  pointer-events:none;
+}
+@keyframes innerSweep{
+  from{transform:translateX(-100%)}
+  to{transform:translateX(100%)}
+}
+
+/* ===== SERVICES ===== */
 .ticks{
   display:flex;
   gap:10px;
-  flex-wrap:wrap;
   margin-bottom:12px;
+  flex-wrap:nowrap;
 }
 .tick{
-  flex:1 1 160px;
+  flex:1;
   border:1px solid var(--border);
-  background: rgba(255,255,255,.06);
   border-radius:14px;
-  padding:10px 12px;
+  padding:12px;
   display:flex;
-  gap:10px;
+  gap:8px;
   align-items:center;
-  cursor:pointer;
-  user-select:none;
   font-weight:900;
+  cursor:pointer;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
-.tick input{
-  width:18px; height:18px;
-  accent-color: var(--blue2);
+.tick input{accent-color:var(--blue2)}
+.tick.active{
+  background:linear-gradient(135deg,var(--blue1),var(--blue2));
+  color:#fff;
 }
-.tick span{font-size:13px; letter-spacing:.2px;}
 
+/* ===== GRID ===== */
 .grid{
   display:grid;
-  grid-template-columns: 1fr 160px;
+  grid-template-columns:1fr 140px;
   gap:12px;
 }
-@media (max-width: 420px){ .grid{ grid-template-columns: 1fr; } }
 .box{
   border:1px solid var(--border);
-  background: var(--glass);
   border-radius:16px;
   padding:12px;
+  overflow:hidden;
 }
-.label{color:var(--muted); font-size:12px; margin-bottom:6px; font-weight:800;}
-.value{font-size:28px; font-weight:950; word-break:break-word;}
-.rem{font-size:32px; font-weight:950; text-align:center;}
+.label{
+  font-size:clamp(10px,1vw,12px);
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.value,.rem{
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.value{font-size:clamp(18px,2vw,24px)}
+.rem{font-size:clamp(22px,2.5vw,28px);text-align:center}
 
+/* ===== ACTIONS ===== */
 .actions{
   margin-top:12px;
   display:grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns:1fr 1fr;
   gap:12px;
 }
 button{
   border:none;
   border-radius:16px;
-  padding:13px 14px;
-  font-size:15px;
+  padding:12px;
   font-weight:900;
   cursor:pointer;
-  transition: transform .08s ease, opacity .15s ease;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
-button:active{ transform: scale(.98); }
-button:disabled{ opacity:.65; cursor:not-allowed; }
-
-.btnNew{
-  color:white;
-  background: linear-gradient(135deg, var(--blue1), var(--blue2));
-  box-shadow: 0 14px 34px rgba(37,99,235,.35);
+.btnBuy{
+  background:linear-gradient(135deg,var(--blue1),var(--blue2));
+  color:#fff;
 }
 .btnCopy{
+  background:linear-gradient(135deg,var(--teal1),var(--teal2));
   color:#052016;
-  background: linear-gradient(135deg, var(--teal1), var(--teal2));
-  box-shadow: 0 14px 34px rgba(16,185,129,.22);
 }
 
-/* Floating toast */
+/* ===== HISTORY ===== */
+.history-wrap{margin-top:14px}
+.history-title{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-weight:900;
+  font-size:clamp(12px,1.1vw,14px);
+  white-space:nowrap;
+  margin-bottom:10px;
+  letter-spacing:1px;
+  padding:4px 12px;
+  border-radius:12px;
+  background:rgba(0,0,0,0.1);
+}
+.history{
+  display:grid;
+  gap:8px;
+}
+.hbox{
+  border:1px dashed var(--border);
+  border-radius:14px;
+  height:42px;
+  padding:0 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  white-space:nowrap;
+  font-weight:900;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  background:rgba(0,0,0,0.1);
+}
+
+/* ===== SERVICE BADGE INSIDE HISTORY ===== */
+.hservice{
+  font-size:clamp(10px,0.9vw,11px);
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  color:var(--muted);
+}
+
+/* ===== GET CODE ===== */
+.getcode{
+  margin-top:12px;
+  width:100%;
+  background:linear-gradient(135deg,#6366f1,#9333ea);
+  color:#fff;
+  border-radius:16px;
+  padding:12px;
+  font-weight:900;
+  cursor:pointer;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* ===== TOAST ===== */
 .toast{
   position:fixed;
   top:12px;
   left:50%;
-  transform: translateX(-50%) translateY(-6px);
-  min-width: 220px;
-  max-width: calc(100vw - 24px);
-  padding:12px 14px;
-  border-radius:14px;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,.6);
   border:1px solid var(--border);
-  background: rgba(0,0,0,.55);
-  color: var(--text);
-  box-shadow: 0 16px 40px rgba(0,0,0,.5);
-  backdrop-filter: blur(10px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
+  padding:10px 14px;
+  border-radius:14px;
   font-weight:900;
+  white-space:nowrap;
   opacity:0;
-  pointer-events:none;
-  transition: opacity .18s ease, transform .18s ease;
-  z-index:9999;
+  transition:.2s;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
-.toast.show{opacity:1; transform: translateX(-50%) translateY(0);}
-.toast .dot{width:9px;height:9px;border-radius:50%;background:#60a5fa;box-shadow:0 0 14px rgba(96,165,250,.6);}
-.toast.ok .dot{background:#34d399;box-shadow:0 0 14px rgba(52,211,153,.55);}
-.toast.warn .dot{background:#facc15;box-shadow:0 0 14px rgba(250,204,21,.55);}
+.toast.show{opacity:1}
 </style>
 </head>
 
 <body>
-<div class="toast" id="toast"><span class="dot"></span><span id="toastText"></span></div>
+
+<div class="toast" id="toast"></div>
 
 <div class="card">
   <div class="top">
@@ -186,29 +276,25 @@ button:disabled{ opacity:.65; cursor:not-allowed; }
       <div class="title">Live Number Panel</div>
       <div class="sub">Created by Tamim</div>
     </div>
-    <div class="badge">LIVE</div>
+    <div class="badge">🖥️ ANU 🇧🇩 </div>
   </div>
 
   <div class="panel">
 
     <div class="ticks">
-      <label class="tick">
-        <input type="radio" name="service" value="facebook" checked>
-        <span>Facebook</span>
+      <label class="tick active" data-service="facebook">
+        <input type="radio" name="service" checked>Facebook
       </label>
-
-      <label class="tick">
-        <input type="radio" name="service" value="instagram">
-        <span>Instagram</span>
+      <label class="tick" data-service="instagram">
+        <input type="radio" name="service">Instagram
       </label>
     </div>
 
     <div class="grid">
       <div class="box">
         <div class="label">Number</div>
-        <div class="value" id="phone">Loading...</div>
+        <div class="value" id="phone"></div>
       </div>
-
       <div class="box">
         <div class="label">Remaining</div>
         <div class="rem" id="remaining">0</div>
@@ -216,144 +302,56 @@ button:disabled{ opacity:.65; cursor:not-allowed; }
     </div>
 
     <div class="actions">
-      <button class="btnNew" id="btnNew">New number</button>
+      <button class="btnBuy" id="btnBuy">Buy Number</button>
       <button class="btnCopy" id="btnCopy">Copy</button>
+    </div>
+
+    <div class="history-wrap">
+      <div class="history-title">NUMBER HISTORY</div>
+      <div class="history" id="history"></div>
+      <button class="getcode" id="getcode">Get Code</button>
     </div>
 
   </div>
 </div>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbyNFudsbr0Tr0luiZ0gYAb6-lLNF5_MXFPcew-7z1QA__I5LpV_7b4dBmUIi5LR_SWeRg/exec";
+const URL="https://script.google.com/macros/s/AKfycbyNFudsbr0Tr0luiZ0gYAb6-lLNF5_MXFPcew-7z1QA__I5LpV_7b4dBmUIi5LR_SWeRg/exec";
+const GETCODE="https://www.ivasms.com/portal/sms/received";
+const HKEY="history3";
 
-const phoneEl = document.getElementById("phone");
-const remEl   = document.getElementById("remaining");
-const btnNew  = document.getElementById("btnNew");
-const btnCopy = document.getElementById("btnCopy");
+const phoneEl=document.getElementById("phone");
+const remEl=document.getElementById("remaining");
+const toast=document.getElementById("toast");
+const historyEl=document.getElementById("history");
 
-const toast = document.getElementById("toast");
-const toastText = document.getElementById("toastText");
-let toastTimer = null;
+function showToast(t){toast.textContent=t;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1200);}
 
-function showToast(msg, type="ok", ms=1300){
-  toast.className = "toast show " + (type || "");
-  toastText.textContent = msg;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=> toast.className = "toast", ms);
-}
+/* service */
+function getService(){return localStorage.getItem("service")||"facebook";}
+function setService(v){localStorage.setItem("service",v);document.querySelectorAll(".tick").forEach(t=>{t.classList.toggle("active",t.dataset.service===v);t.querySelector("input").checked=t.dataset.service===v;});}
 
-function getService(){
-  return document.querySelector('input[name="service"]:checked')?.value || "facebook";
-}
-function qs(params){
-  const s = new URLSearchParams(params);
-  return s.toString();
-}
+/* history */
+function loadHistory(){return JSON.parse(localStorage.getItem(HKEY)||"[]");}
+function saveHistory(h){localStorage.setItem(HKEY,JSON.stringify(h.slice(0,3)));}
+function addHistory(num){if(!num) return;let h=loadHistory();h.unshift({n:num,s:getService()});saveHistory(h);renderHistory();}
+function renderHistory(){const h=loadHistory();historyEl.innerHTML="";for(let i=0;i<3;i++){if(h[i]){historyEl.innerHTML+=`<div class="hbox"><span>${h[i].n}</span><span class="hservice">${h[i].s}</span></div>`}else{historyEl.innerHTML+=`<div class="hbox"></div>`}}}
 
-/* ✅ If value is only digits => show + ; if text => no + */
-function showPlusOnlyForDigits(s){
-  s = String(s ?? "").trim();
-  if(!s || s === "Loading..." || s === "No more data") return s;
-  return /^[0-9]+$/.test(s) ? ("+" + s) : s;
-}
+/* load state */
+async function loadState(){try{const r=await fetch(URL+"?action=state&service="+getService());const d=await r.json();phoneEl.textContent=d.current||"";remEl.textContent=d.remaining||"0";}catch(e){showToast("Network error");}}
 
-function forceCopy(text){
-  text = (text || "").trim();
-  if (!text || text === "Loading..." || text === "No more data") return false;
-  const ta = document.createElement("textarea");
-  ta.value = text;
-  ta.style.position = "fixed";
-  ta.style.left = "-9999px";
-  document.body.appendChild(ta);
-  ta.select();
-  let ok = false;
-  try { ok = document.execCommand("copy"); } catch(e) { ok = false; }
-  document.body.removeChild(ta);
-  return ok;
-}
+/* buy number */
+async function buy(){showToast("Processing…");try{const r=await fetch(URL+"?action=pop&service="+getService());const d=await r.json();if(d.status==="ok"){phoneEl.textContent=d.value;remEl.textContent=d.remaining;addHistory(d.value);showToast("Success");}else{showToast("Out of stock");}}catch(e){showToast("Network error");}}
 
-async function loadState(){
-  const service = getService();
-  try{
-    const r = await fetch(URL + "?" + qs({action:"state", service}), { cache:"no-store" });
-    const d = await r.json();
-    if(d.status === "ok"){
-      phoneEl.textContent = showPlusOnlyForDigits(d.current);
-      remEl.textContent = d.remaining;
-    }else{
-      showToast("State error", "warn", 1500);
-    }
-  }catch(e){
-    showToast("Network error", "warn", 1500);
-  }
-}
+/* events */
+document.getElementById("btnBuy").onclick=buy;
+document.getElementById("btnCopy").onclick=async()=>{if(!phoneEl.textContent) return showToast("Nothing");await navigator.clipboard.writeText(phoneEl.textContent);addHistory(phoneEl.textContent);showToast("Copied");};
+document.getElementById("getcode").onclick=()=>window.open(GETCODE,"_blank");
+document.querySelectorAll(".tick").forEach(t=>t.onclick=()=>{setService(t.dataset.service);loadState();});
 
-async function popOnce(){
-  const service = getService();
-  const r = await fetch(URL + "?" + qs({action:"pop", service}), { cache:"no-store" });
-  return await r.json();
-}
-
-async function newNumber(){
-  btnNew.disabled = true;
-  const old = btnNew.textContent;
-  btnNew.textContent = "Working…";
-  showToast("Working…", "warn", 900);
-
-  while(true){
-    let d;
-    try{
-      d = await popOnce();
-    }catch(e){
-      showToast("Network error", "warn", 1500);
-      break;
-    }
-
-    if(d.status === "ok"){
-      phoneEl.textContent = showPlusOnlyForDigits(d.value);
-      remEl.textContent = d.remaining;
-      showToast("New number successfully", "ok", 1200);
-      break;
-    }
-
-    if(d.status === "empty"){
-      phoneEl.textContent = showPlusOnlyForDigits(d.value || "No more data");
-      remEl.textContent = d.remaining ?? "0";
-      showToast("No more data", "warn", 1400);
-      break;
-    }
-
-    if(d.status === "busy"){
-      const ms = Number(d.retry_after_ms || 800);
-      let sec = Math.max(1, Math.ceil(ms/1000));
-      while(sec > 0){
-        showToast("Busy… wait " + sec + "s", "warn", 950);
-        await new Promise(r => setTimeout(r, 1000));
-        sec--;
-      }
-      continue;
-    }
-
-    showToast("Error", "warn", 1400);
-    break;
-  }
-
-  btnNew.textContent = old;
-  btnNew.disabled = false;
-}
-
-btnNew.addEventListener("click", newNumber);
-
-btnCopy.addEventListener("click", () => {
-  const ok = forceCopy(phoneEl.textContent);
-  showToast(ok ? "Copied" : "Copy failed", ok ? "ok" : "warn", 1100);
-});
-
-document.querySelectorAll('input[name="service"]').forEach(el=>{
-  el.addEventListener("change", loadState);
-});
-
-loadState();
+/* init */
+(function(){setService(getService());loadState();renderHistory();})();
 </script>
+
 </body>
 </html>
