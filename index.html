@@ -328,7 +328,7 @@ const historyEl=document.getElementById("history");
 function showToast(t){toast.textContent=t;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1200);}
 
 /* service */
-function getService(){return localStorage.getItem("service")||"facebook";}
+function getService(){return localStorage.getItem("service")||"facebook 1";}
 function setService(v){localStorage.setItem("service",v);document.querySelectorAll(".tick").forEach(t=>{t.classList.toggle("active",t.dataset.service===v);t.querySelector("input").checked=t.dataset.service===v;});}
 
 /* history */
