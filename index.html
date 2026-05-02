@@ -276,7 +276,7 @@ button{
       <div class="title">ANU Live Number Panel</div>
       <div class="sub">Created by Tamim</div>
     </div>
-    <div class="badge">🖥️ ANU 🇧🇩 </div>
+    <div class="badge">🖥️ ANANNA 🇧🇩 </div>
   </div>
 
   <div class="panel">
@@ -341,7 +341,7 @@ function renderHistory(){const h=loadHistory();historyEl.innerHTML="";for(let i=
 async function loadState(){try{const r=await fetch(URL+"?action=state&service="+getService());const d=await r.json();phoneEl.textContent=d.current||"";remEl.textContent=d.remaining||"0";}catch(e){showToast("Network error");}}
 
 /* buy number */
-async function buy(){showToast("Processing…");try{const r=await fetch(URL+"?action=pop&service="+getService());const d=await r.json();if(d.status==="ok"){phoneEl.textContent=d.value;remEl.textContent=d.remaining;addHistory(d.value);showToast("Success");}else{showToast("Out of stock");}}catch(e){showToast("Network error");}}
+async function buy(){showToast("Delete Processing…");try{const r=await fetch(URL+"?action=pop&service="+getService());const d=await r.json();if(d.status==="ok"){phoneEl.textContent=d.value;remEl.textContent=d.remaining;addHistory(d.value);showToast("Success");}else{showToast("Out of stock");}}catch(e){showToast("Network error");}}
 
 /* events */
 document.getElementById("btnBuy").onclick=buy;
